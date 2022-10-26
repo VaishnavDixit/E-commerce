@@ -1,25 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react'
+import { Route, Routes } from 'react-router-dom';
+import Book from './components/MainPage';
+import ProductCard from './components/ProductCard';
+import ProductInfo from './components/ProductInfo';
+import MainPage from './components/MainPage';
+import LoginPage from './components/LoginPage';
+import CardsDisplayer from './components/CardsDisplayer';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	console.log(`app.js started.`)
+	let [cart, setCart] = useState([]); // list of ids of all the items in the cart 
+	let [liked, setLiked] = useState([]); // list of ids of all the items liked
+	return (
+		<Routes>
+			<Route path='/' element={<LoginPage />} />
+			<Route path='/products' >
+				<Route index element={<MainPage cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
+				<Route path=':title' element={<ProductInfo cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
+			</Route>
+			<Route path='cart' element={<CardsDisplayer listOf={'cart'} cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
+			<Route path='likes' element={<CardsDisplayer listOf={'likes'} cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
+			<Route path='*' element={<p>NOT FOUND :(</p>} />
+		</Routes>
+	);
 }
 
 export default App;
