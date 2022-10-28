@@ -55,9 +55,8 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 			setCart([...cart, id]);// adding id to the cart
 
 		notification.open({
-			message: 'Added to the cart.',
 			description:
-				`${title}' is ${cartStatus ? 'removed from' : 'added to'} the cart.`,
+				`'${title}' is ${cartStatus ? 'removed from' : 'added to'} the cart.`,
 			icon: (
 				<ShoppingCartOutlined
 					twoToneColor={CART_COLOR}
@@ -93,13 +92,23 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 				</Col>
 			</Row>
 
-			<Row style={{ display: 'flex', justifyContent: 'space-between' }}>
-				<Collapse style={{width: '400px'}}>
+			<Row style={{ margin:'10px', display: 'flex', justifyContent: 'space-between' }}>
+				<Collapse style={{ width: '400px' }}>
 					<Panel header='Specifications:'>
 						{
-							specifications.map(({ descType, descValue }) => {
-								return <><Text><b>{descType}</b> : {descValue}</Text><br /></>
-							})
+							<List
+								size="small"
+								// header={<div>Header</div>}
+								// footer={<div>Footer</div>}
+								// bordered
+								dataSource={specifications}
+								renderItem={({ descType, descValue }) =>
+									<List.Item><Text><b>{descType}</b> : {descValue}</Text></List.Item>
+								}
+							/>
+							// specifications.map(({descType, descValue}) => {
+							// 	return <><Text><b>{descType}</b> : {descValue}</Text><br /></>
+							// })
 						}
 					</Panel>
 				</Collapse>
@@ -111,7 +120,7 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 			</Row>
 			<Row>
 				<Col xs={24} xl={18} style={{}}>
-					<Title level={4} style={{ padding: '10px' }}>You might also like</Title>
+					<Title level={4} style={{ padding: '0px' }}>You might also like</Title>
 					<div style={{
 						display: 'flex', flexWrap: 'wrap', alignItems: 'center', flexShrink: 0, overflowY: 'auto'
 					}}>
@@ -140,7 +149,7 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 				</Col>
 				{/* Reviews list */}
 				<Col xs={24} xl={6}>
-					<Title level={4} style={{ padding: '10px' }}>Reviews</Title>
+					<Title level={4} style={{ padding: '10px' }}>{reviews.length} Reviews</Title>
 					<List
 						itemLayout="horizontal"
 						dataSource={reviews}

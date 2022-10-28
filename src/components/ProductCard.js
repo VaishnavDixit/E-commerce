@@ -25,7 +25,7 @@ const ProductCard = (props) => {
 			setLiked([...liked, id]); // if heart not liked, add current id into 'liked'
 		notification.open({ // notification box will appear liked button click
 			description:
-				`id: ${id},'${title}' is ${heartStatus ? 'removed from' : 'added to'} the liked items.`,
+				`'${title}' is ${heartStatus ? 'removed from' : 'added to'} the liked items.`,
 			icon: (
 				<HeartTwoTone
 					twoToneColor={HEART_COLOR}
