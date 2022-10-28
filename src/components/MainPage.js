@@ -1,8 +1,9 @@
-import React, {  } from 'react'
-import { Typography, Menu } from 'antd'
+import React, { } from 'react'
+import { Typography, Menu, Input } from 'antd'
 import 'antd/dist/antd.css';
 import ProductCard from './ProductCard';
 import DATA from './productsData.json' //Data from backend, saved locally as Json
+import addBorder from './addBorder';
 import { Link } from 'react-router-dom'
 const { Title } = Typography
 
@@ -10,26 +11,25 @@ const MainPage = ({ cart, liked, setCart, setLiked }) => {
 	//Main page starts. Shows all the products listed in the website. 
 	const data = DATA;
 	console.log('main page start')
-
 	return (
 		<>
-			<Menu mode="horizontal">
-				<Menu.Item key="mail">
-					<Link to='/cart'>View cart</Link>
-				</Menu.Item>
-				<Menu.Item key="app">
-					<Link to='/likes'>View likes</Link>
-				</Menu.Item>
-			</Menu>
 			<Title level={2} style={{ textAlign: 'left', margin: '20px 20px 20px 10px', border: '' }}>
 				Find your products here
 			</Title>
+			{/* <Search
+				placeholder="input search text"
+				enterButton="Search"
+				size="large"
+				// suffix={suffix}
+				onSearch={onSearch}
+			/> */}
+
 			<div style={{
 				display: 'flex',
 				flexWrap: 'wrap',
 				height: '100px',
 				alignItems: 'center',
-				justifyContent: 'space-around'
+				justifyContent: 'space-between'
 			}}>
 				{
 					//extracts 
@@ -37,6 +37,7 @@ const MainPage = ({ cart, liked, setCart, setLiked }) => {
 						({ id, image, title, description, price, brand, discount }) =>
 							<ProductCard
 								id={id}
+								type='normal'
 								image={image}
 								title={title}
 								description={description}
@@ -56,4 +57,4 @@ const MainPage = ({ cart, liked, setCart, setLiked }) => {
 	)
 }
 
-export default MainPage
+export default addBorder(MainPage)

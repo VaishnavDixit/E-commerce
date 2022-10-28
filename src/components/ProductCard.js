@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Card, notification, Image, Typography, Spin } from 'antd'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
-import {  ShoppingCartOutlined, HeartTwoTone } from '@ant-design/icons';
-import {  useNavigate } from 'react-router-dom';
+import { ShoppingCartOutlined, HeartTwoTone } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 const { Meta } = Card
 const { Title, Text } = Typography
 const HEART_COLOR = '#ed2f96';
@@ -12,7 +12,7 @@ const INITIAL_COLOR = '#bbbbbb'
 const ProductCard = (props) => {
 	//Shows information of a product with 'id' id.
 	// Imports cart and like arr and methods from App.js as props 
-	const { id, image, title, description, price, brand, discount, cart, setCart, liked, setLiked } = props;
+	const { id, type, image, title, description, price, brand, discount, cart, setCart, liked, setLiked } = props;
 	const navigate = useNavigate();
 	console.log(`PC, id=${id}`);
 
@@ -59,7 +59,7 @@ const ProductCard = (props) => {
 				hoverable
 				bordered={true}
 				style={{
-					width: '350px',
+					width: type == 'normal' ? '350px' : '200px',
 					margin: '5px',
 				}}
 				onClick={(e) => {

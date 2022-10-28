@@ -14,8 +14,8 @@ const LoginPage = () => {
 		console.log('Failed:', errorInfo);
 	}
 	return (
-		<div>
-			<Title level={2} style={{ textAlign: 'center', margin: '20px 20px 20px 20px' }}>React e-commerce site</Title>
+		<div style={{ height: '600px', display: 'flex', flexDirection: 'column', border: '', alignContent: 'center',justifyContent: 'center' }}>
+			<Title level={1} style={{ textAlign: 'center', margin: '20px 20px 20px 20px' }}>React e-commerce site</Title>
 			<Form
 				style={{ display: 'block', margin: '20px' }}
 				name="basic"

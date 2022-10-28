@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Row, Col, Image, Typography, Statistic, Avatar, List, Button, notification } from 'antd';
+import { Row, Col, Collapse, Image, Typography, Statistic, Avatar, List, Button, notification } from 'antd';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { HeartTwoTone, ShoppingCartOutlined } from '@ant-design/icons';
 import DATA from './productsData.json'
 import ProductCard from './ProductCard';
+import addBorder from './addBorder';
 const HEART_COLOR = '#ed2f96';
 const CART_COLOR = 'green';
 const INITIAL_COLOR = '#bbbbbb'
 const { Title, Text, Paragraph } = Typography;
+const { Panel } = Collapse
 
 const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 	//Shows page of current page. This component receives id of the current product from the <ProductCard/> Comp. 
 	//We navigate from <ProductCard/> to this page using useNavigate() hook, and pass {id} along(line no. 67-ProductCard.js). 
 	//We can't pass functions from here. 
-
 
 	//Problem: Can't access state functions in ProductCard. Therefore I had to initiate the cart and liked array in App.js so that they can be passed as props here. 
 
@@ -23,7 +24,7 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 	let border = '1px solid grey'; border = ''// border for layout debugging. comment this line to see borders around elements.
 	const data = DATA;
 	//Extract data of current product from the id 
-	const { id, image, title, brand, longDescription, description, price, reviews, discount, likes, relatedIds } = data.filter(({ id: i }) => i == location.state.id)[0];
+	const { id, image, title, brand, longDescription, description, price, reviews, discount, likes, relatedIds, specifications } = data.filter(({ id: i }) => i == location.state.id)[0];
 	const heartClickHandler = (e) => {
 		console.log('heart')
 		let heartStatus = liked.includes(id);
@@ -52,7 +53,6 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 			setCart(cart.filter((i) => i != id)); // removing id from the cart
 		else
 			setCart([...cart, id]);// adding id to the cart
-
 
 		notification.open({
 			message: 'Added to the cart.',
@@ -92,10 +92,23 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 					</Row>
 				</Col>
 			</Row>
-			<Button.Group style={{ display: 'flex', justifyContent: 'end', marginRight: '10px' }}>
-				<Button onClick={cartClickHandler}>Add to Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
-				<Button type='primary'>Buy now</Button>
-			</Button.Group>
+
+			<Row style={{ display: 'flex', justifyContent: 'space-between' }}>
+				<Collapse style={{width: '400px'}}>
+					<Panel header='Specifications:'>
+						{
+							specifications.map(({ descType, descValue }) => {
+								return <><Text><b>{descType}</b> : {descValue}</Text><br /></>
+							})
+						}
+					</Panel>
+				</Collapse>
+
+				<Button.Group style={{ display: 'flex', justifyContent: 'end', marginRight: '10px' }}>
+					<Button onClick={cartClickHandler}>Add to Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
+					<Button type='primary'>Buy now</Button>
+				</Button.Group>
+			</Row>
 			<Row>
 				<Col xs={24} xl={18} style={{}}>
 					<Title level={4} style={{ padding: '10px' }}>You might also like</Title>
@@ -108,6 +121,7 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 								({ id, image, title, description, price, brand, discount }) =>
 									<ProductCard
 										id={id}
+										type='small'
 										image={image}
 										title={title}
 										description={description}
@@ -153,4 +167,4 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 	)
 }
 
-export default ProductInfo
+export default addBorder(ProductInfo)

@@ -8,7 +8,7 @@ import ProductInfo from './components/ProductInfo';
 import MainPage from './components/MainPage';
 import LoginPage from './components/LoginPage';
 import CardsDisplayer from './components/CardsDisplayer';
-
+import NavBar from './components/NavBar';
 function App() {
 	console.log(`app.js started.`)
 	let [cart, setCart] = useState([]); // list of ids of all the items in the cart 
@@ -16,7 +16,7 @@ function App() {
 	return (
 		<Routes>
 			<Route path='/' element={<LoginPage />} />
-			<Route path='/products' >
+			<Route path='/products' element={<NavBar/>}>
 				<Route index element={<MainPage cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
 				<Route path=':title' element={<ProductInfo cart={cart} liked={liked} setCart={setCart} setLiked={setLiked} />} />
 			</Route>
