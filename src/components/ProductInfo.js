@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Row, Col, Collapse, Image, Typography, Statistic, Avatar, List, Button, notification, InputNumber } from 'antd';
+import { Row, Col, Collapse, Image, Typography, Tag, Statistic, Avatar, List, Button, Divider, notification, InputNumber, BackTop } from 'antd';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { HeartTwoTone, ShoppingCartOutlined } from '@ant-design/icons';
 import DATA from './productsData.json'
@@ -21,11 +21,12 @@ const ProductInfo = (props) => {
 	//Problem: Can't access state functions in ProductCard. Therefore I had to initiate the cart and liked array in App.js so that they can be passed as props here. 
 	console.log('product info started.')
 	const location = useLocation(); // to sccess the state passed through useNavigate() from <ProductCard/>
-	let border = '1px solid grey'; border = ''// border for layout debugging. comment this line to see borders around elements.
+	let border = '1px solid grey';
+	border = ''// border for layout debugging. comment this line to see borders around elements.
 	const data = DATA;
 	const { cart, addToCart, removeFromCart, likes: likeList, addToLikes, removeFromLikes } = props;
 	//Extract data of current product from the id 
-	const { id, image, title, brand, longDescription, description, price, reviews, discount, likes, relatedIds, specifications } = data.filter(({ id: i }) => i == location.state.id)[0];
+	const { id, image, title, brand, longDescription, description, price, reviews, discount, likes, relatedIds, alsoBought, faq, category, specifications, returnable, freeDelivery } = data.filter(({ id: i }) => i == location.state.id)[0];
 	const heartClickHandler = (e) => {
 		console.log('heart')
 		let heartStatus = likeList.includes(id);
@@ -69,21 +70,28 @@ const ProductInfo = (props) => {
 	return (
 		<>
 			<Row >
-				<Col xs={24} xl={7} style={{ border: border, background: '', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+				<Col xs={24} xl={7} style={{ border: border, background: '', padding: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Image src={image} style={{ display: 'block', border: border }} />
 				</Col>
-				<Col xs={24} xl={15} style={{ padding: ' 10px', border: border }}>
+				<Col xs={24} xl={17} style={{ padding: ' 10px', border: border }}>
 					<Title level={2}>{title}</Title>
 					<Title level={5}>By <b>{brand}</b></Title>
 					<Paragraph><b>Description:</b> {description}</Paragraph>
 					<Title level={4}>About</Title>
 					<Paragraph>{longDescription}</Paragraph>
+					<Tag color="geekblue">{category}</Tag>
+					{
+						freeDelivery ? <Tag color="green">Free Delivery</Tag> : ''
+					}
+					{
+						(!returnable) || (category === 'Beauty') || (category === 'Pet care') || (category === 'Health and Hygiene') || (category === 'Plants') ? <Tag color="warning">Non-returnable</Tag>:''
+					}
 					<Row>
 						<Col span={6} style={{ border: '', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
 							<Statistic valueStyle={{ fontSize: '1.5em' }} style={{ border: '', margin: '5px' }} value={likes + Number(likeList.includes(id))} prefix={<HeartTwoTone twoToneColor={likeList.includes(id) ? HEART_COLOR : INITIAL_COLOR} onClick={heartClickHandler} />} />
 						</Col>
 						<Col span={18} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-							<Text style={{ fontSize: '2.2em', margin: '10px' }}><b>₹{price.toLocaleString('en-IN')}</b></Text>
+							<Text style={{ fontSize: '2.2em', margin: '10px' }}><b>₹{(price-1).toLocaleString('en-IN')}</b></Text>
 							<Text style={{ fontSize: '1em', margin: '0px' }} type='warning' ><strike>₹{Math.floor(price * (100 / (100 - discount))).toLocaleString('en-IN')}</strike></Text>
 							<Text style={{ fontSize: '1em', margin: '5px' }} type='success' ><b>({discount}% discount)</b></Text>
 						</Col>
@@ -107,21 +115,22 @@ const ProductInfo = (props) => {
 				</Collapse>
 				<Button.Group style={{ display: 'flex', justifyContent: 'end', marginRight: '10px' }}>
 					<InputNumber
-						style={{ width: '130px', marginRight: '10px' }}
+						style={{ width: '130px', marginRight: '10px', marginTop: '10px' }}
 						addonBefore={<Text>Quantity:</Text>}
 						defaultValue={1}
 						max={10}
 						min={1}
 					/>
-					<Button onClick={cartClickHandler} style={{ marginRight: '10px' }}>Add to Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
-					<Button type='primary'>Buy now</Button>
+					<Button onClick={cartClickHandler} style={{ marginRight: '10px', marginTop: '10px' }}>{cart.includes(id) ? 'Remove from ' : 'Add to '}Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
+					<Button type='primary' style={{ marginTop: '10px' }}>Buy now</Button>
 				</Button.Group>
 			</Row>
+
 			<Row>
-				<Col xs={24} xl={18} style={{}}>
-					<Title level={4} style={{ padding: '0px' }}>You might also like</Title>
+				<Col xs={24} xl={17} style={{}}>
+					<Title level={3} style={{ marginLeft: '10px', marginTop: '30px' }}>You might also like</Title>
 					<div style={{
-						display: 'flex', flexWrap: 'wrap', alignItems: 'center', flexShrink: 0, overflowY: 'auto'
+						display: 'grid', gridAutoFlow: 'column', alignItems: 'center', overflow: 'auto', scrollbarWidth: '5px', justifyContent: 'start'
 					}}>
 						{
 							//list of recommended items, displayed using the list of IDS saved in 'relatedIds' and showing Cards corresponding to these ids.
@@ -140,32 +149,112 @@ const ProductInfo = (props) => {
 							)
 						}
 					</div>
+					<Title level={3} style={{ marginLeft: '10px', marginTop: '30px' }}>People who bought this also bought</Title>
+					<div style={{
+						display: 'grid', gridAutoFlow: 'column', alignItems: 'center', overflow: 'auto', justifyContent: 'start'
+					}}>
+						{
+							//list of recommended items, displayed using the list of IDS saved in 'relatedIds' and showing Cards corresponding to these ids.
+							data.filter((prod) => alsoBought.includes(prod.id) && id !== prod.id).map(
+								({ id, image, title, description, price, brand, discount }) =>
+									<ProductCard
+										id={id}
+										type='small'
+										image={image}
+										title={title}
+										description={description}
+										price={price}
+										brand={brand}
+										discount={discount}
+									/>
+							)
+
+						}
+					</div>
+					<Title level={3} style={{ marginLeft: '10px', marginTop: '30px' }}>Related products in this category</Title>
+					<div style={{
+						display: 'grid', gridAutoFlow: 'column', alignItems: 'center', overflow: 'auto', justifyContent: 'start'
+					}}>
+						{
+							//list of recommended items, displayed using the list of IDS saved in 'relatedIds' and showing Cards corresponding to these ids.
+							data.filter(({ category: c }) => c === category).map(
+								({ id, image, title, description, price, brand, discount }) =>
+									<ProductCard
+										id={id}
+										type='small'
+										image={image}
+										title={title}
+										description={description}
+										price={price}
+										brand={brand}
+										discount={discount}
+									/>
+							)
+
+						}
+					</div>
 				</Col>
-				{/* Reviews list */}
+				{/* <Divider/> */}
 				<Col xs={24} xl={6}>
-					<Title level={4} style={{ padding: '10px' }}>{reviews.length} Reviews</Title>
-					<List
-						itemLayout="horizontal"
-						dataSource={reviews}
-						pagination={{
-							onChange: page => {
-								console.log(page);
-							},
-							pageSize: 4,
-						}}
-						renderItem={({ reviewName, reviewMessage }) => (
-							<List.Item>
-								<List.Item.Meta
-									avatar={<Avatar src="https://joeschmoe.io/api/v1/17" />}
-									title={<a href="https://ant.design">{reviewName}</a>}
-									description={reviewMessage}
-								/>
-							</List.Item>
-						)}
-						style={{ margin: '10px' }}
-					/>
+					<Title level={4} style={{ padding: '10px' }}>{reviews.length} Review{reviews.length !== 1 ? 's' : ''}</Title>
+					{
+						(reviews.length) ?
+							<List
+								dataSource={reviews}
+								pagination={{
+									onChange: page => {
+										console.log(page);
+									},
+									pageSize: 4,
+								}}
+								renderItem={({ reviewName, reviewMessage }) => (
+									<List.Item>
+										<List.Item.Meta
+											avatar={<Avatar src="https://joeschmoe.io/api/v1/10" />}
+											title={<b>{reviewName}</b>}
+											description={reviewMessage}
+										/>
+									</List.Item>
+								)}
+								style={{ margin: '10px' }}
+							/> : ''
+					}
+					<Divider />
+					<Title level={4} style={{ padding: '10px' }}>{faq.length} FAQ{faq.length != 1 ? 's' : ''}</Title>
+					{
+						(faq.length) ?
+							<List
+								dataSource={faq}
+								pagination={{
+									onChange: page => {
+										console.log(page);
+									},
+									pageSize: 4,
+								}}
+								renderItem={({ question, answer }) => (
+									<List.Item>
+										<List.Item.Meta
+											// avatar={<Avatar src="https://joeschmoe.io/api/v1/10" />}
+											title={<b>Ques. {question}?</b>}
+											description={<><b>Ans.</b> {answer}</>}
+										/>
+									</List.Item>
+								)}
+								style={{ margin: '10px' }}
+							/> : ''
+					}
 				</Col>
 			</Row>
+
+			<Row>
+
+				<Col xs={24} xl={6}>
+				</Col>
+			</Row>
+
+			<BackTop>
+				<Button type='primary' style={{ width: '120px', height: '40px', textAlign: 'center' }}><b>Back to top</b></Button>
+			</BackTop>
 		</>
 	)
 }

@@ -1,10 +1,11 @@
 import React, { } from 'react'
-import { Typography, Menu, Input } from 'antd'
+import { Typography, Menu, Input, BackTop, Button } from 'antd'
 import 'antd/dist/antd.css';
 import ProductCard from './ProductCard';
 import DATA from './productsData.json' //Data from backend, saved locally as Json
 import addBorder from './addBorder';
 import { lightTheme } from './colors';
+// import { Button } from 'antd/lib/radio';
 const { Title } = Typography
 
 const MainPage = () => {
@@ -23,7 +24,7 @@ const MainPage = () => {
 				// suffix={suffix}
 				onSearch={onSearch}
 			/> */}
-
+			
 			<div style={{
 				display: 'flex',
 				flexWrap: 'wrap',
@@ -48,6 +49,9 @@ const MainPage = () => {
 					)
 				}
 			</div>
+			<BackTop>
+				<Button type='primary' style={{ width: '120px', height: '40px', textAlign:'center' }}><b>Back to top</b></Button>
+			</BackTop>
 		</div>
 	)
 }

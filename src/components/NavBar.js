@@ -1,11 +1,12 @@
 import React from 'react'
-import { Menu } from 'antd'
+import { Menu, Affix } from 'antd'
 import { Link, Outlet } from 'react-router-dom'
 import { lightTheme } from './colors'
 const NavBar = () => {
 	return (
-		<>
-			<Menu mode='horizontal'>
+		<>	<Affix>
+
+			<Menu mode='horizontal' >
 				<Menu.Item key="cart">
 					<Link to='/cart'>View cart</Link>
 				</Menu.Item>
@@ -19,6 +20,7 @@ const NavBar = () => {
 					<Link to='/products'>View products</Link>
 				</Menu.Item>
 			</Menu>
+			</Affix>
 			<Outlet />
 		</>
 	)

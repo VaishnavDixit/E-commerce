@@ -12,18 +12,19 @@ const { Title } = Typography
 const CardsDisplayer = (props) => {
 	let sum = 0;
 	const data = DATA
-	const { listOf, cart, addToCart, removeFromCart, likes: likeList, addToLikes, removeFromLikes } = props;
+	const { listOf, cart, likes: likeList } = props;
 
 	return (
 		<>
 			<Title>{listOf == 'likes' ? 'Your liked items' : 'Your cart'}</Title>
+			
 			<div style={{
 				display: 'flex',
 				flexWrap: 'wrap',
 				alignItems: 'center',
 				justifyContent: 'space-around'
 			}}>
-				{
+				{	
 					data.filter((prod) => ((listOf == 'likes') ? likeList : cart).includes(prod.id)).map(
 						({ id, image, title, description, price, brand, discount }) => {
 							sum += Number(price);

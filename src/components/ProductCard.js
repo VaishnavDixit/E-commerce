@@ -9,9 +9,6 @@ import { addToCart, removeFromCart, addToLikes, removeFromLikes } from '../redux
 import { lightTheme } from './colors';
 const { Meta } = Card
 const { Title, Text } = Typography
-// const HEART_COLOR = '#ed2f96';
-// const CART_COLOR = 'green';
-// const INITIAL_COLOR = '#bbbbbb'
 
 const ProductCard = (props) => {
 	//Shows information of a product with 'id' id.
@@ -66,7 +63,7 @@ const ProductCard = (props) => {
 				hoverable
 				bordered={true}
 				style={{
-					width: type == 'normal' ? '380px' : '250px',
+					width: type == 'normal' ? '380px' : '200px',
 					margin: '5px',
 					backgroundColor: lightTheme.productCardBackground
 				}}
@@ -91,7 +88,6 @@ const ProductCard = (props) => {
 						twoToneColor={likes.includes(id) ? HEART_COLOR : INITIAL_COLOR}
 						onClick={(e) => {
 							console.log(e.target)
-							// e.target.attributes.getNamedItem('twoToneColor') = e.target.attributes.getNamedItem('twoToneColor') == INITIAL_COLOR ? 'yellow' : INITIAL_COLOR;
 							heartClickHandler(e);
 						}}
 					/>,
@@ -115,7 +111,7 @@ const ProductCard = (props) => {
 				/>
 				<Title level={5} style={{ marginTop: '15px' }}>By {brand || 'xxx'}</Title>
 				<Text type='warning' style={{ float: 'left', marginTop: '15px' }}><strike>₹{Math.floor(price * (100 / (100 - discount))).toLocaleString('en-IN') || 'xxx'}</strike></Text>
-				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{price.toLocaleString('en-IN') || 'xxx'}</b></Title>
+				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{(price-1).toLocaleString('en-IN') || 'xxx'}</b></Title>
 			</Card>
 		</>
 	)
