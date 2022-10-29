@@ -1,7 +1,7 @@
 import React from 'react'
-import { Form, Input, Checkbox, Typography, Button } from 'antd';
+import { Form, Input,  Typography, Button } from 'antd';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
-import { Outlet, Route, Routes, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 const { Title } = Typography
 const LoginPage = () => {
 	console.log(`login page started.`)

@@ -1,13 +1,19 @@
 import React from 'react'
 import ProductCard from './ProductCard'
-import { Button, Typography } from 'antd'
+import { Button, Card, Typography } from 'antd'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import DATA from './productsData.json'
 import addPadding from './addBorder'
+
+import { connect } from 'react-redux'
+import { addToCart, removeFromCart, addToLikes, removeFromLikes } from '../redux';
+
 const { Title } = Typography
-const CardsDisplayer = ({ listOf, cart, liked, setCart, setLiked }) => {
+const CardsDisplayer = (props) => {
 	let sum = 0;
 	const data = DATA
+	const { listOf, cart, addToCart, removeFromCart, likes: likeList, addToLikes, removeFromLikes } = props;
+
 	return (
 		<>
 			<Title>{listOf == 'likes' ? 'Your liked items' : 'Your cart'}</Title>
@@ -18,7 +24,7 @@ const CardsDisplayer = ({ listOf, cart, liked, setCart, setLiked }) => {
 				justifyContent: 'space-around'
 			}}>
 				{
-					data.filter((prod) => ((listOf == 'likes') ? liked : cart).includes(prod.id)).map(
+					data.filter((prod) => ((listOf == 'likes') ? likeList : cart).includes(prod.id)).map(
 						({ id, image, title, description, price, brand, discount }) => {
 							sum += Number(price);
 							return <ProductCard
@@ -30,10 +36,6 @@ const CardsDisplayer = ({ listOf, cart, liked, setCart, setLiked }) => {
 								price={price}
 								brand={brand}
 								discount={discount}
-								cart={cart}
-								liked={liked}
-								setCart={setCart}
-								setLiked={setLiked}
 							/>
 						}
 					)
@@ -51,4 +53,25 @@ const CardsDisplayer = ({ listOf, cart, liked, setCart, setLiked }) => {
 	)
 }
 
-export default addPadding(CardsDisplayer)
+const mapStateToProps = state => {
+	return {
+		cart: state.cart.list,
+		likes: state.like.list,
+	}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		addToCart: (id) => dispatch(addToCart(id)),
+		removeFromCart: (id) => dispatch(removeFromCart(id)),
+		addToLikes: (id) => dispatch(addToLikes(id)),
+		removeFromLikes: (id) => dispatch(removeFromLikes(id)),
+	}
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)(addPadding(CardsDisplayer))
+
+// export default addPadding(CardsDisplayer)

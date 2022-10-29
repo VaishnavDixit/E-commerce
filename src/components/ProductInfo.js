@@ -1,38 +1,38 @@
 import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Row, Col, Collapse, Image, Typography, Statistic, Avatar, List, Button, notification } from 'antd';
+import { Row, Col, Collapse, Image, Typography, Statistic, Avatar, List, Button, notification, InputNumber } from 'antd';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { HeartTwoTone, ShoppingCartOutlined } from '@ant-design/icons';
 import DATA from './productsData.json'
 import ProductCard from './ProductCard';
+import { HEART_COLOR, CART_COLOR, INITIAL_COLOR } from './constants';
 import addBorder from './addBorder';
-const HEART_COLOR = '#ed2f96';
-const CART_COLOR = 'green';
-const INITIAL_COLOR = '#bbbbbb'
+
+import { connect } from 'react-redux'
+import { addToCart, removeFromCart, addToLikes, removeFromLikes } from '../redux';
+
 const { Title, Text, Paragraph } = Typography;
 const { Panel } = Collapse
 
-const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
+const ProductInfo = (props) => {
 	//Shows page of current page. This component receives id of the current product from the <ProductCard/> Comp. 
 	//We navigate from <ProductCard/> to this page using useNavigate() hook, and pass {id} along(line no. 67-ProductCard.js). 
 	//We can't pass functions from here. 
-
 	//Problem: Can't access state functions in ProductCard. Therefore I had to initiate the cart and liked array in App.js so that they can be passed as props here. 
-
 	console.log('product info started.')
 	const location = useLocation(); // to sccess the state passed through useNavigate() from <ProductCard/>
 	let border = '1px solid grey'; border = ''// border for layout debugging. comment this line to see borders around elements.
 	const data = DATA;
+	const { cart, addToCart, removeFromCart, likes: likeList, addToLikes, removeFromLikes } = props;
 	//Extract data of current product from the id 
 	const { id, image, title, brand, longDescription, description, price, reviews, discount, likes, relatedIds, specifications } = data.filter(({ id: i }) => i == location.state.id)[0];
 	const heartClickHandler = (e) => {
 		console.log('heart')
-		let heartStatus = liked.includes(id);
+		let heartStatus = likeList.includes(id);
 		if (heartStatus)
-			setLiked(liked.filter((i) => i != id));
+			removeFromLikes(id)
 		else
-			setLiked([...liked, id]);
-		//notification card on the top-right of the page
+			addToLikes(id)		//notification card on the top-right of the page
 		notification.open({
 			description:
 				`'${title}' is ${heartStatus ? 'removed from' : 'added to'} the liked items.`,
@@ -50,10 +50,9 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 		console.log('cart')
 		let cartStatus = cart.includes(id);
 		if (cartStatus)
-			setCart(cart.filter((i) => i != id)); // removing id from the cart
+			removeFromCart(id);
 		else
-			setCart([...cart, id]);// adding id to the cart
-
+			addToCart(id);
 		notification.open({
 			description:
 				`'${title}' is ${cartStatus ? 'removed from' : 'added to'} the cart.`,
@@ -76,45 +75,45 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 				<Col xs={24} xl={15} style={{ padding: ' 10px', border: border }}>
 					<Title level={2}>{title}</Title>
 					<Title level={5}>By <b>{brand}</b></Title>
-					<Paragraph><b>Desc:</b> {description}</Paragraph>
+					<Paragraph><b>Description:</b> {description}</Paragraph>
 					<Title level={4}>About</Title>
 					<Paragraph>{longDescription}</Paragraph>
 					<Row>
 						<Col span={6} style={{ border: '', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-							<Statistic valueStyle={{ fontSize: '1.5em' }} style={{ border: '', margin: '5px' }} value={likes + Number(liked.includes(id))} prefix={<HeartTwoTone twoToneColor={liked.includes(id) ? HEART_COLOR : INITIAL_COLOR} onClick={heartClickHandler} />} />
+							<Statistic valueStyle={{ fontSize: '1.5em' }} style={{ border: '', margin: '5px' }} value={likes + Number(likeList.includes(id))} prefix={<HeartTwoTone twoToneColor={likeList.includes(id) ? HEART_COLOR : INITIAL_COLOR} onClick={heartClickHandler} />} />
 						</Col>
 						<Col span={18} style={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-							<Text style={{ fontSize: '2.2em', margin: '10px' }}><b>₹{price}</b></Text>
-							<Text style={{ fontSize: '1em', margin: '0px' }} type='warning' ><strike>₹{Math.floor(price * (100 / (100 - discount)))}</strike></Text>
+							<Text style={{ fontSize: '2.2em', margin: '10px' }}><b>₹{price.toLocaleString('en-IN')}</b></Text>
+							<Text style={{ fontSize: '1em', margin: '0px' }} type='warning' ><strike>₹{Math.floor(price * (100 / (100 - discount))).toLocaleString('en-IN')}</strike></Text>
 							<Text style={{ fontSize: '1em', margin: '5px' }} type='success' ><b>({discount}% discount)</b></Text>
 						</Col>
 					</Row>
 				</Col>
 			</Row>
 
-			<Row style={{ margin:'10px', display: 'flex', justifyContent: 'space-between' }}>
-				<Collapse style={{ width: '400px' }}>
+			<Row style={{ margin: '10px', display: 'flex', justifyContent: 'space-between', WebkitAlignItems: 'top' }}>
+				<Collapse style={{ width: '300px' }}>
 					<Panel header='Specifications:'>
 						{
 							<List
 								size="small"
-								// header={<div>Header</div>}
-								// footer={<div>Footer</div>}
-								// bordered
 								dataSource={specifications}
 								renderItem={({ descType, descValue }) =>
 									<List.Item><Text><b>{descType}</b> : {descValue}</Text></List.Item>
 								}
 							/>
-							// specifications.map(({descType, descValue}) => {
-							// 	return <><Text><b>{descType}</b> : {descValue}</Text><br /></>
-							// })
 						}
 					</Panel>
 				</Collapse>
-
 				<Button.Group style={{ display: 'flex', justifyContent: 'end', marginRight: '10px' }}>
-					<Button onClick={cartClickHandler}>Add to Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
+					<InputNumber
+						style={{ width: '130px', marginRight: '10px' }}
+						addonBefore={<Text>Quantity:</Text>}
+						defaultValue={1}
+						max={10}
+						min={1}
+					/>
+					<Button onClick={cartClickHandler} style={{ marginRight: '10px' }}>Add to Cart<ShoppingCartOutlined style={{ color: cart.includes(id) ? CART_COLOR : INITIAL_COLOR }} /></Button>
 					<Button type='primary'>Buy now</Button>
 				</Button.Group>
 			</Row>
@@ -137,11 +136,6 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 										price={price}
 										brand={brand}
 										discount={discount}
-										//following attrs are declared in App.js:
-										cart={cart}
-										liked={liked}
-										setCart={setCart}
-										setLiked={setLiked}
 									/>
 							)
 						}
@@ -157,7 +151,7 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 							onChange: page => {
 								console.log(page);
 							},
-							pageSize: 3,
+							pageSize: 4,
 						}}
 						renderItem={({ reviewName, reviewMessage }) => (
 							<List.Item>
@@ -176,4 +170,24 @@ const ProductInfo = ({ cart, liked, setCart, setLiked }) => {
 	)
 }
 
-export default addBorder(ProductInfo)
+const mapStateToProps = state => {
+	return {
+		cart: state.cart.list,
+		likes: state.like.list,
+	}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		addToCart: (id) => dispatch(addToCart(id)),
+		removeFromCart: (id) => dispatch(removeFromCart(id)),
+		addToLikes: (id) => dispatch(addToLikes(id)),
+		removeFromLikes: (id) => dispatch(removeFromLikes(id)),
+	}
+}
+
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)(ProductInfo)

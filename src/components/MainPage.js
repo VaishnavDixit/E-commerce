@@ -4,15 +4,15 @@ import 'antd/dist/antd.css';
 import ProductCard from './ProductCard';
 import DATA from './productsData.json' //Data from backend, saved locally as Json
 import addBorder from './addBorder';
-import { Link } from 'react-router-dom'
+import { lightTheme } from './colors';
 const { Title } = Typography
 
-const MainPage = ({ cart, liked, setCart, setLiked }) => {
+const MainPage = () => {
 	//Main page starts. Shows all the products listed in the website. 
 	const data = DATA;
 	console.log('main page start')
 	return (
-		<>
+		<div >
 			<Title level={2} style={{ textAlign: 'left', margin: '20px 20px 20px 10px', border: '' }}>
 				Find your products here
 			</Title>
@@ -44,16 +44,11 @@ const MainPage = ({ cart, liked, setCart, setLiked }) => {
 								price={price}
 								brand={brand}
 								discount={discount}
-								//following attrs are declared in App.js:
-								cart={cart}
-								liked={liked}
-								setCart={setCart}
-								setLiked={setLiked}
 							/>
 					)
 				}
 			</div>
-		</>
+		</div>
 	)
 }
 

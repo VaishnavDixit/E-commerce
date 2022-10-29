@@ -3,26 +3,32 @@ import { Card, notification, Image, Typography, Spin } from 'antd'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { ShoppingCartOutlined, HeartTwoTone } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { HEART_COLOR, CART_COLOR, INITIAL_COLOR } from './constants';
+import { connect } from 'react-redux'
+import { addToCart, removeFromCart, addToLikes, removeFromLikes } from '../redux';
+import { lightTheme } from './colors';
 const { Meta } = Card
 const { Title, Text } = Typography
-const HEART_COLOR = '#ed2f96';
-const CART_COLOR = 'green';
-const INITIAL_COLOR = '#bbbbbb'
+// const HEART_COLOR = '#ed2f96';
+// const CART_COLOR = 'green';
+// const INITIAL_COLOR = '#bbbbbb'
 
 const ProductCard = (props) => {
 	//Shows information of a product with 'id' id.
 	// Imports cart and like arr and methods from App.js as props 
-	const { id, type, image, title, description, price, brand, discount, cart, setCart, liked, setLiked } = props;
+	const { id, type, image, title, description, price, brand, discount } = props; // from MainPage
+	const { cart, addToCart, removeFromCart, likes, addToLikes, removeFromLikes } = props; // redux store
+
 	const navigate = useNavigate();
 	console.log(`PC, id=${id}`);
-
 	const heartClickHandler = (e) => { // when like button is clicked, add cur. id in the 'liked' list
-		console.log('heart')
-		let heartStatus = liked.includes(id); // 
+		console.log('heart...');
+		console.log(likes)
+		let heartStatus = likes.includes(id); // 
 		if (heartStatus)
-			setLiked(liked.filter((i) => i != id)); // if heart already liked, remove current id from 'liked'
+			removeFromLikes(id); // if heart already liked, remove current id from 'liked'
 		else
-			setLiked([...liked, id]); // if heart not liked, add current id into 'liked'
+			addToLikes(id); // if heart not liked, add current id into 'liked'
 		notification.open({ // notification box will appear liked button click
 			description:
 				`'${title}' is ${heartStatus ? 'removed from' : 'added to'} the liked items.`,
@@ -39,9 +45,9 @@ const ProductCard = (props) => {
 		console.log('cart')
 		let cartStatus = cart.includes(id);
 		if (cartStatus)
-			setCart(cart.filter((i) => i != id));
+			removeFromCart(id);
 		else
-			setCart([...cart, id]);
+			addToCart(id);
 		notification.open({
 			description:
 				`'${title}' is ${cartStatus ? 'Removed from' : 'added to'} the cart.`,
@@ -53,14 +59,16 @@ const ProductCard = (props) => {
 		});
 		e.stopPropagation();
 	}
+
 	return (
-		<div>
+		<>
 			<Card
 				hoverable
 				bordered={true}
 				style={{
-					width: type == 'normal' ? '350px' : '200px',
+					width: type == 'normal' ? '380px' : '250px',
 					margin: '5px',
+					backgroundColor: lightTheme.productCardBackground
 				}}
 				onClick={(e) => {
 					console.log(`${id} card clicked. `)
@@ -68,7 +76,7 @@ const ProductCard = (props) => {
 					e.stopPropagation();
 				}}
 				cover={
-					// when not loaded, show this.
+					// when the image is not loaded, show this.
 					<Image
 						alt="Loading..."
 						src={image}
@@ -79,7 +87,8 @@ const ProductCard = (props) => {
 				}
 				actions={[
 					<HeartTwoTone
-						twoToneColor={liked.includes(id) ? HEART_COLOR : INITIAL_COLOR}
+						// style={{backgroundColor: lightTheme.productCardBackground}}
+						twoToneColor={likes.includes(id) ? HEART_COLOR : INITIAL_COLOR}
 						onClick={(e) => {
 							console.log(e.target)
 							// e.target.attributes.getNamedItem('twoToneColor') = e.target.attributes.getNamedItem('twoToneColor') == INITIAL_COLOR ? 'yellow' : INITIAL_COLOR;
@@ -101,15 +110,34 @@ const ProductCard = (props) => {
 			>
 				<Meta
 					title={title || 'xxx'}
-					style={{ cursor: 'pointer' }}
+					style={{ backgroundColor: '', cursor: 'pointer' }}
 					description={description || 'xxx'}
 				/>
 				<Title level={5} style={{ marginTop: '15px' }}>By {brand || 'xxx'}</Title>
-				<Text type='warning' style={{ float: 'left', marginTop: '15px' }}><strike>₹{Math.floor(price * (100 / (100 - discount))) || 'xxx'}</strike></Text>
-				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{price || 'xxx'}</b></Title>
+				<Text type='warning' style={{ float: 'left', marginTop: '15px' }}><strike>₹{Math.floor(price * (100 / (100 - discount))).toLocaleString('en-IN') || 'xxx'}</strike></Text>
+				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{price.toLocaleString('en-IN') || 'xxx'}</b></Title>
 			</Card>
-		</div>
+		</>
 	)
 }
 
-export default ProductCard
+const mapStateToProps = state => {
+	return {
+		cart: state.cart.list,
+		likes: state.like.list,
+	}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+		addToCart: (id) => dispatch(addToCart(id)),
+		removeFromCart: (id) => dispatch(removeFromCart(id)),
+		addToLikes: (id) => dispatch(addToLikes(id)),
+		removeFromLikes: (id) => dispatch(removeFromLikes(id)),
+	}
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)(React.memo(ProductCard))

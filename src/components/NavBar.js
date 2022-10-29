@@ -1,6 +1,7 @@
 import React from 'react'
 import { Menu } from 'antd'
 import { Link, Outlet } from 'react-router-dom'
+import { lightTheme } from './colors'
 const NavBar = () => {
 	return (
 		<>
