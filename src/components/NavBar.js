@@ -6,21 +6,21 @@ const NavBar = () => {
 	return (
 		<>	<Affix>
 
-			<Menu mode='horizontal' >
+			<Menu mode='horizontal' selectable={false}>
 				<Menu.Item key="cart">
-					<Link to='/cart'>View cart</Link>
+					<Link to='/cart' replace={true}>View cart</Link>
 				</Menu.Item>
 				<Menu.Item key="likes">
-					<Link to='/likes'>View liked items</Link>
+					<Link to='/likes' replace={true}>View liked items</Link>
 				</Menu.Item>
-				<Menu.Item key="orders">
-					<Link to='/orders'>My orders</Link>
-				</Menu.Item>
+				{/* <Menu.Item key="orders">
+					<Link to='/orders' replace={true}>My orders</Link>
+				</Menu.Item> */}
 				<Menu.Item key="products">
-					<Link to='/products'>View products</Link>
+					<Link to='/products' replace={true}>View products</Link>
 				</Menu.Item>
 			</Menu>
-			</Affix>
+		</Affix>
 			<Outlet />
 		</>
 	)

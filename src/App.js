@@ -15,8 +15,6 @@ import { Provider } from 'react-redux'
 import store from './redux/store';
 
 function App() {
-	console.log(`app.js started.`)
-	const navigate = useNavigate();
 	return (
 		<Provider store={store}>
 			<Routes>
@@ -28,11 +26,9 @@ function App() {
 					</Route>
 					<Route path='cart' element={<CardsDisplayer listOf={'cart'} />} />
 					<Route path='likes' element={<CardsDisplayer listOf={'likes'} />} />
-					<Route path='orders' element={<b>Your orders Will appear here.</b>} />
+					{/* <Route path='orders' element={<b>Your orders Will appear here.</b>} /> */}
 				</Route>
-				<Route path='*' element={
-					<WrongPath />
-				} />
+				<Route path='*' element={<WrongPath />} />
 			</Routes>
 		</Provider>
 	);

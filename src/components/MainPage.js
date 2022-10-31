@@ -13,18 +13,10 @@ const MainPage = () => {
 	const data = DATA;
 	console.log('main page start')
 	return (
-		<div >
+		<div>
 			<Title level={2} style={{ textAlign: 'left', margin: '20px 20px 20px 10px', border: '' }}>
 				Find your products here
 			</Title>
-			{/* <Search
-				placeholder="input search text"
-				enterButton="Search"
-				size="large"
-				// suffix={suffix}
-				onSearch={onSearch}
-			/> */}
-			
 			<div style={{
 				display: 'flex',
 				flexWrap: 'wrap',
@@ -49,9 +41,6 @@ const MainPage = () => {
 					)
 				}
 			</div>
-			<BackTop>
-				<Button type='primary' style={{ width: '120px', height: '40px', textAlign:'center' }}><b>Back to top</b></Button>
-			</BackTop>
 		</div>
 	)
 }

@@ -69,7 +69,7 @@ const ProductCard = (props) => {
 				}}
 				onClick={(e) => {
 					console.log(`${id} card clicked. `)
-					navigate(`/products/${title}`, { state: { id: id } })
+					navigate(`/products/${title}`, { state: { id: id }, replace: true })
 					e.stopPropagation();
 				}}
 				cover={
@@ -111,8 +111,9 @@ const ProductCard = (props) => {
 				/>
 				<Title level={5} style={{ marginTop: '15px' }}>By {brand || 'xxx'}</Title>
 				<Text type='warning' style={{ float: 'left', marginTop: '15px' }}><strike>₹{Math.floor(price * (100 / (100 - discount))).toLocaleString('en-IN') || 'xxx'}</strike></Text>
-				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{(price-1).toLocaleString('en-IN') || 'xxx'}</b></Title>
+				<Title level={5} style={{ float: 'right', marginTop: '15px' }}><b>₹{(price).toLocaleString('en-IN') || 'xxx'}</b></Title>
 			</Card>
+			
 		</>
 	)
 }

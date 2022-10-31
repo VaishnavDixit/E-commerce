@@ -15,14 +15,13 @@ const CardsDisplayer = (props) => {
 	const { listOf, cart, likes: likeList } = props;
 
 	return (
-		<>
+		<>	
 			<Title>{listOf == 'likes' ? 'Your liked items' : 'Your cart'}</Title>
-			
 			<div style={{
 				display: 'flex',
 				flexWrap: 'wrap',
 				alignItems: 'center',
-				justifyContent: 'space-around'
+				justifyContent: 'start'
 			}}>
 				{	
 					data.filter((prod) => ((listOf == 'likes') ? likeList : cart).includes(prod.id)).map(
